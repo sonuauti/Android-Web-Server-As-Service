@@ -21,18 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package cis.web.androidwebserver.appapis.queryfiles;
+package cis.web.androidwebserver;
 
 import java.util.HashMap;
-
-import cis.web.androidwebserver.TinyWebServer;
 
 /**
  *
  * @author cis
  */
 public class AppApis {
-    
+
+    /**
+     * Implement api in this class
+     */
     public AppApis(){
     }
     

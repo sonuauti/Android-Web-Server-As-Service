@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:text="Android Web Server"
+        android:text="@string/app_name"
         android:textColor="#888"
         android:padding="5dp"
         android:id="@+id/title"
@@ -32,7 +32,9 @@
         android:layout_below="@id/server_dir_label"
         android:layout_width="match_parent"
         android:layout_marginRight="15dp"
-        android:hint="/storage/web/html"
+        android:hint="/public_html/"
+        android:lines="1"
+        android:text="/tinyweb/"
         android:layout_height="55dp"/>
 
     <TextView
@@ -85,10 +87,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_alignLeft="@id/remoteConfigcheck"
+        android:layout_below="@id/remoteConfigcheck"
+        android:id="@+id/message"
+        android:textSize="14sp"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <Button
-        android:textColor="#fff"
+        android:textColor="@color/colorPrimary"
         android:textAllCaps="false"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/rounded_corner_text"
         android:layout_centerHorizontal="true"
         android:text="Start"
         android:id="@+id/start_stopbtn"
@@ -105,6 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_marginBottom="15dp"
         android:textColor="#aaa"
+        android:textSize="12sp"
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"/>
 </RelativeLayout>

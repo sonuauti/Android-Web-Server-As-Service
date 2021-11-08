@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:text="Android Web Server"
+        android:textColor="#888"
+        android:padding="5dp"
+        android:id="@+id/title"
+        android:layout_margin="15dp"
+        android:textSize="22sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/server_dir_label"
+        android:layout_marginTop="15dp"
+        android:text="SERVER DIRECTORY"
+        android:layout_below="@id/title"
+        android:layout_alignLeft="@id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/serverDir"
+        android:layout_alignLeft="@id/server_dir_label"
+        android:layout_below="@id/server_dir_label"
+        android:layout_width="match_parent"
+        android:layout_marginRight="15dp"
+        android:hint="/storage/web/html"
+        android:layout_height="55dp"/>
+
+    <TextView
+        android:layout_below="@id/serverDir"
+        android:id="@+id/portlabel"
+        android:layout_marginTop="15dp"
+        android:text="PORT"
+        android:layout_alignLeft="@id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:layout_alignLeft="@id/portlabel"
+        android:layout_below="@id/portlabel"
+        android:id="@+id/portNum"
+        android:hint="9000"
+        android:layout_width="100dp"
+        android:digits="1234567890"
+        android:maxLength="5"
+        android:text="9000"
+        android:layout_height="55dp"/>
+
+   <CheckBox
+       android:layout_below="@+id/portNum"
+       android:id="@+id/runasbgcheck"
+       android:layout_marginTop="15dp"
+       android:layout_alignLeft="@id/portNum"
+       android:text="Run as service"
+       android:textColor="#666"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:layout_alignTop="@id/runasbgcheck"
+        android:id="@+id/restartcheck"
+        android:layout_toRightOf="@id/runasbgcheck"
+        android:text="Auto restart"
+        android:textColor="#666"
+        android:layout_marginLeft="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:layout_below="@id/restartcheck"
+        android:id="@+id/remoteConfigcheck"
+        android:layout_alignLeft="@id/runasbgcheck"
+        android:text="Remote config"
+        android:textColor="#666"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:textColor="#fff"
+        android:textAllCaps="false"
+        android:background="@color/colorPrimaryDark"
+        android:layout_centerHorizontal="true"
+        android:text="Start"
+        android:id="@+id/start_stopbtn"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="250dp"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:text="@string/lic_label"
+        android:id="@+id/lic_label"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:textColor="#aaa"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

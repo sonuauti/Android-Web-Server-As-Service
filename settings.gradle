@@ -1,0 +1,3 @@
+rootProject.name='Android Web Server'
+include ':app'
+include ':app:androidwebserver'

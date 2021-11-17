@@ -1,6 +1,7 @@
 package cis.web.androidwebserver;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
@@ -17,6 +18,10 @@ public class ServerManager {
     private int port;
     private String ip;
     private Context context;
+    private String uuid;
+    private Class baseClass;
+    private String baseDir;
+    private boolean isBackgroundrun;
 
     private static ServerManager serverManager;
 
@@ -27,7 +32,43 @@ public class ServerManager {
         return serverManager;
     }
 
+    public boolean isBackgroundrun() {
+        return isBackgroundrun;
+    }
+
+    public void setBackgroundrun(boolean backgroundrun) {
+        isBackgroundrun = backgroundrun;
+    }
+
+    public void setBaseDir(String baseDir) {
+        this.baseDir = baseDir;
+    }
+
+    public String getBaseDir() {
+        if (baseDir==null)
+            return "/tinyweb/";
+        return baseDir;
+    }
+
+    public void setBaseClass(Class baseClass) {
+        this.baseClass = baseClass;
+    }
+
+    public Class getBaseClass() {
+        return baseClass;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
     public int getPort() {
+        if (port==0)
+            return 9000;
         return port;
     }
 
@@ -93,6 +134,13 @@ public class ServerManager {
             return ip;
         } catch (Exception ex) { } // for now eat exceptions
         return "";
+    }
+
+    public static boolean writeSharedPref(SharedPreferences sharedPref, String key, String value){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(key, value);
+        editor.apply();
+        return editor.commit();
     }
 
 

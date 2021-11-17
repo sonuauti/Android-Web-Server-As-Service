@@ -3,7 +3,7 @@ package cis.web.androidwebserver;
 /*
  * The MIT License
  *
- * Copyright 2018 Sonu Auti http://sonuauti.com twitter @SonuAuti
+ * Copyright 2018 Sonu Auti  twitter @SonuAuti , github @sonuauti
  * insta @matki_paw
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,6 +27,8 @@ package cis.web.androidwebserver;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
@@ -225,7 +227,20 @@ public class TinyWebServer extends Thread {
     }
 
     private static String TAG="TinyWebServer";
-    public static void init(String ip, int port, String public_dir) {
+    private static void init(String ip, int port, String public_dir) {
+
+        try {
+
+            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+            File myDir = new File(root + public_dir);
+            if (!myDir.exists()) {
+                myDir.mkdirs();
+                System.out.println(public_dir+" created !");
+            }
+        }catch (Exception er){
+            System.out.println(er.getMessage());
+        }
+
         SERVER_IP = ip;
         SERVER_PORT = port;
         WEB_DIR_PATH = public_dir;
@@ -233,6 +248,58 @@ public class TinyWebServer extends Thread {
         scanFileDirectory();
     }
 
+    /**
+     *
+     * @param ip   - local device ip address (wifi / ethernet / gsm)
+     * @param port - port on which server should listen for requests
+     * @param public_dir - static files to serve
+     * @param isAsService - true to run in background
+     * @param context - app context
+     * @return
+     */
+    public static boolean startServer(String ip, int port,
+                                      String public_dir,
+                                      boolean isAsService,
+                                      Context context){
+        try {
+            isStart = true;
+
+            ServerManager.getInstance().setBaseClass(context.getClass());
+            ServerManager.getInstance().setBaseDir(public_dir);
+
+            SharedPreferences sharedPreferences=context.getApplicationContext().getSharedPreferences("app_config",
+                    Context.MODE_PRIVATE);
+
+            ServerManager.writeSharedPref(sharedPreferences,"ip",ip);
+            ServerManager.writeSharedPref(sharedPreferences,"port",port+"");
+            ServerManager.writeSharedPref(sharedPreferences,"baseDir",public_dir);
+            ServerManager.writeSharedPref(sharedPreferences,"isRunBg",isAsService+"");
+
+            init(ip, port, public_dir);
+            if (!isAsService) {
+                new TinyWebServer(SERVER_IP, port).start();
+            }else{
+                context.startService(new Intent(context, LocalServerHandlerService.class));
+            }
+            System.out.println("Server Started @TinyWebServer");
+            return true;
+
+            // Log.d("TinyWebServer","server started");
+        } catch (IOException e) {
+            //e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param ip   - local device ip address (wifi / ethernet / gsm)
+     * @param port - port on which server should listen for requests
+     * @param public_dir - static files to serve
+     * @return
+     */
     public static boolean startServer(String ip, int port, String public_dir) {
         try {
             isStart = true;
@@ -240,8 +307,6 @@ public class TinyWebServer extends Thread {
             new TinyWebServer(SERVER_IP, port).start();
             System.out.println("Server Started @TinyWebServer");
             return true;
-
-            // Log.d("TinyWebServer","server started");
         } catch (IOException e) {
             //e.printStackTrace();
         } catch (Exception e) {
@@ -256,9 +321,9 @@ public class TinyWebServer extends Thread {
                 isStart = false;
                 if (serverSocket!=null)
                 serverSocket.close();
-                System.out.println("Server stopped running !");
+                System.out.println("Server stopped !");
             } catch (IOException er) {
-                //er.printStackTrace();
+                System.out.println(er.getMessage());
             }
         }
     }
@@ -431,7 +496,6 @@ public class TinyWebServer extends Thread {
             STATUS = TinyWebServer.OKAY;
             return getNameMethod.invoke(obj, qparms).toString();
         } catch (Exception er) {
-            //er.printStackTrace();
             System.out.println("Error for " + name + " " + er.getMessage());
             return pageNotFound();
         }
@@ -564,12 +628,12 @@ public class TinyWebServer extends Thread {
             output.flush();
 
         } catch (Exception er) {
-            ServerManager.getInstance().printStack(er);
+            System.out.println(er.getMessage());
         }
 
     }
 
-    @SuppressWarnings("static-method")
+
     protected void printHeader(PrintWriter pw, String key, String value) {
         pw.append(key).append(": ").append(value).append("\r\n");
     }

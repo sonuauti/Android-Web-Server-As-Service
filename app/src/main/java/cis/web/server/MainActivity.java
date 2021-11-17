@@ -5,21 +5,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 
+import cis.web.androidwebserver.LocalServerHandlerService;
 import cis.web.androidwebserver.ServerManager;
 import cis.web.androidwebserver.TinyWebServer;
 
@@ -36,10 +44,19 @@ public class MainActivity extends AppCompatActivity {
         port=findViewById(R.id.portNum);
         serverDir=findViewById(R.id.serverDir);
         CheckBox isService = findViewById(R.id.runasbgcheck);
-        CheckBox autorestart=findViewById(R.id.restartcheck);
-        CheckBox remoteConfigcheck=findViewById(R.id.remoteConfigcheck);
+
         message=findViewById(R.id.message);
         message.setVisibility(View.INVISIBLE);
+
+        CheckBox autorestart=findViewById(R.id.restartcheck);
+        CheckBox remoteConfigcheck=findViewById(R.id.remoteConfigcheck);
+
+        isService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ServerManager.getInstance().setBackgroundrun(isChecked);
+            }
+        });
 
         if (Build.VERSION.SDK_INT>=23) {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
@@ -56,12 +73,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED){
                     init((Button) v);
+                }else{
+                    Toast.makeText(getApplicationContext(),"File write permission not granted",Toast.LENGTH_SHORT).show();
                 }
-               init((Button) v);
             }
         });
 
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -72,31 +91,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(Button view){
-        final int portNum=Integer.valueOf(port.getText().toString());
-        if (portNum<79){
-            Toast.makeText(getApplicationContext(),"Invalid port number, must be greater than 80",Toast.LENGTH_SHORT).show();
-            TinyWebServer.stopServer();
-            return;
-        }
 
-        ServerManager.getInstance().setPort(portNum);
+            final int portNum=Integer.valueOf(port.getText().toString());
 
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File myDir = new File(root + serverDir.getText().toString());
-        if (!myDir.exists()){
-            myDir.mkdirs();
-        }
+            if (portNum<79){
+                Toast.makeText(getApplicationContext(),"Invalid port number, must be greater than 80",Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        if(TinyWebServer.isStart){
-            TinyWebServer.stopServer();
-        }
+            ServerManager.getInstance().setPort(portNum);
 
-        String dir = serverDir.getText().toString().trim();
-        if(TinyWebServer.startServer(ServerManager.getInstance().getIp(),ServerManager.getInstance().getPort(), dir)){
-            view.setText("Running");
-            message.setText("Server started http://"+ServerManager.getInstance().getIp()+":"+ServerManager.getInstance().getPort());
-            message.setVisibility(View.VISIBLE);
-        }
+            if(TinyWebServer.isStart){
+                TinyWebServer.stopServer();
+            }
+
+            String dir = serverDir.getText().toString().trim();
+
+            if (TinyWebServer.startServer(ServerManager.getInstance().getIp(),
+                    ServerManager.getInstance().getPort(),
+                    dir,ServerManager.getInstance().isBackgroundrun(),
+                    this)) {
+
+                view.setText("Running");
+                message.setText("Server started http://" + ServerManager.getInstance().getIp() + ":" + ServerManager.getInstance().getPort());
+                message.setVisibility(View.VISIBLE);
+
+            }
+
     }
 
 }

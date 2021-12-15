@@ -1,7 +1,7 @@
 # Android-Web-Server-As-Service
 Implementation of https://github.com/sonuauti/Android-Web-Server as service for android os
 
-# How to use under android gradle?
+# How to consume in project?
 
 ```java
 dependencies {
